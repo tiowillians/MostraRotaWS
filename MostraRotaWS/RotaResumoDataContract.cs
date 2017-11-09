@@ -10,7 +10,7 @@ namespace MostraRotaWS
     public class RotaResumoDataContract
     {
         [DataMember]
-        public int Id { get; set; }
+        public int NumRota { get; set; }
 
         [DataMember]
         public DateTime DtHrIni { get; set; }

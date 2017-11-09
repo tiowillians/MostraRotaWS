@@ -1,6 +1,7 @@
 ﻿using MostraRotaWS.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace MostraRotaWS
@@ -9,6 +10,8 @@ namespace MostraRotaWS
     // OBSERVAÇÃO: Para iniciar o cliente de teste do WCF para testar esse serviço, selecione MostraRotaService.svc ou MostraRotaService.svc.cs no Gerenciador de Soluções e inicie a depuração.
     public class MostraRotaService : IMostraRotaService
     {
+        private static NumberFormatInfo formatinfo = null;
+
         public UsuarioDataContract GetUsr(string email)
         {
             try
@@ -149,9 +152,9 @@ namespace MostraRotaWS
                     RotaDataContract novo = new RotaDataContract
                     {
                         EmailUsuario = rot.email_usr,
-                        Id = rot.id,
-                        DtHrIni = rot.dthr_ini,
-                        DtHrFim = rot.dthr_fim,
+                        NumRota = rot.num_rota,
+                        DtHrIni = rot.dthr_ini.ToString("G"),
+                        DtHrFim = rot.dthr_fim.ToString("G"),
                         Distancia = rot.distancia,
                         Coordenadas = GetCoordenadas(usrEmail, idRota)
                     };
@@ -191,7 +194,7 @@ namespace MostraRotaWS
                     {
                         novaRota = new RotaResumoDataContract
                         {
-                            Id = r.id,
+                            NumRota = r.num_rota,
                             DtHrIni = r.dthr_ini,
                         };
 
@@ -209,7 +212,7 @@ namespace MostraRotaWS
             }
         }
 
-        public bool InsertRota(RotaDataContract dados)
+        public bool InsertRotaCompleta(RotaDataContract dados)
         {
             try
             {
@@ -219,9 +222,9 @@ namespace MostraRotaWS
                     rotas novaRota = new rotas
                     {
                         email_usr = dados.EmailUsuario,
-                        id = dados.Id,
-                        dthr_ini = dados.DtHrIni,
-                        dthr_fim = dados.DtHrFim,
+                        num_rota = dados.NumRota,
+                        dthr_ini = DateTime.Parse(dados.DtHrIni),
+                        dthr_fim = DateTime.Parse(dados.DtHrFim),
                         distancia = dados.Distancia
                     };
 
@@ -233,21 +236,8 @@ namespace MostraRotaWS
 
                     // obtem coordenadas da rota
                     coordenadas novaCoord;
-                    foreach(CoordenadaDataContract c in dados.Coordenadas)
-                    {
-                        novaCoord = new coordenadas
-                        {
-                            id = 0,
-                            email_usr = c.EmailUsr,
-                            id_rota = c.IdRota,
-                            datahora = c.DataHora,
-                            latitude = c.Latitute,
-                            longitude = c.Longitude
-                        };
-
-                        // adiciona coordenada ao DBSet
-                        database.coordenadas.Add(novaCoord);
-                    }
+                    foreach (CoordenadaDataContract c in dados.Coordenadas)
+                        InsertCoordenada(c);
 
                     // salva DBSet na base de dados
                     database.SaveChanges();
@@ -257,7 +247,7 @@ namespace MostraRotaWS
             }
             catch (Exception e)
             {
-                Console.WriteLine("InsertRota Exception: " + e.Message);
+                Console.WriteLine("InsertRotaCompleta Exception: " + e.Message);
                 return false;
             }
         }
@@ -293,7 +283,7 @@ namespace MostraRotaWS
             }
         }
 
-        private List<CoordenadaDataContract> GetCoordenadas(string emailUsr, int rotaId)
+        private List<CoordenadaDataContract> GetCoordenadas(string emailUsr, int idRota)
         {
             try
             {
@@ -302,7 +292,7 @@ namespace MostraRotaWS
                 {
                     // retorna os registros da tabela coordenadas
                     var reg = from l in database.coordenadas
-                              where l.id_rota == rotaId
+                              where l.num_rota == idRota
                               select l;
 
                     if (reg == null)
@@ -317,12 +307,12 @@ namespace MostraRotaWS
                     {
                         novaCoord = new CoordenadaDataContract
                         {
-                            Id = c.id,
                             EmailUsr = c.email_usr,
-                            IdRota = c.id_rota,
-                            DataHora = c.datahora,
-                            Latitute = c.latitude,
-                            Longitude = c.longitude
+                            NumRota = c.num_rota,
+                            Seq = c.seq,
+                            DataHora = c.datahora.ToString("G"),
+                            Latitude = c.latitude.ToString(),
+                            Longitude = c.longitude.ToString()
                         };
 
                         coordList.Add(novaCoord);
@@ -337,6 +327,40 @@ namespace MostraRotaWS
                 Console.WriteLine("GetCoordenadas Exception: " + e.Message);
                 return null;
             }
+        }
+
+        private bool InsertCoordenada(CoordenadaDataContract dados)
+        {
+            try
+            {
+                // Conecta ao banco de dados MostraRota usando Entity Framework
+                using (mostrarotaEntities database = new mostrarotaEntities())
+                {
+                    coordenadas novaCoord = new coordenadas
+                    {
+                        email_usr = dados.EmailUsr,
+                        num_rota = dados.NumRota,
+                        seq = dados.Seq,
+                        datahora = DateTime.Parse(dados.DataHora),
+                        latitude = GetFloat(dados.Latitude),
+                        longitude = GetFloat(dados.Longitude)
+                    };
+
+                    // adiciona coordenada no DBSet
+                    database.coordenadas.Add(novaCoord);
+
+                    // salva DBSet na base de dados
+                    database.SaveChanges();
+
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("InsertRotaSimples Exception: " + e.Message);
+                return false;
+            }
+
         }
 
         private bool EliminaRotasUsuario(string emailUser)
@@ -358,10 +382,10 @@ namespace MostraRotaWS
                     rotas rota;
                     foreach (rotas r in reg)
                     {
-                        rota = database.rotas.Find(r.email_usr, r.id);
+                        rota = database.rotas.Find(r.email_usr, r.num_rota);
 
                         // elimina as coordendas da rota
-                        EliminaCoordenadasRota(r.email_usr, r.id);
+                        EliminaCoordenadasRota(r.email_usr, r.num_rota);
 
                         // remove rota do DBSet
                         database.rotas.Remove(rota);
@@ -389,7 +413,7 @@ namespace MostraRotaWS
                 {
                     // retorna os registros da tabela coordenadas
                     var reg = from l in database.coordenadas
-                              where l.email_usr == emailUsr && l.id_rota == rotaId
+                              where l.email_usr == emailUsr && l.num_rota == rotaId
                               select l;
 
                     if (reg == null)
@@ -399,7 +423,7 @@ namespace MostraRotaWS
                     coordenadas coord;
                     foreach (coordenadas c in reg)
                     {
-                        coord = database.coordenadas.Find(c.id);
+                        coord = database.coordenadas.Find(c.email_usr, c.num_rota, c.seq);
 
                         // remove coordenada do DBSet
                         database.coordenadas.Remove(coord);
@@ -416,6 +440,30 @@ namespace MostraRotaWS
                 Console.WriteLine("EliminaRotasUsuario Exception: " + e.Message);
                 return false;
             }
+        }
+
+        private float GetFloat(string s)
+        {
+            float d;
+
+            if (formatinfo == null)
+                formatinfo = new NumberFormatInfo();
+
+            formatinfo.NumberDecimalSeparator = ".";
+
+            if (float.TryParse(s, NumberStyles.Float, formatinfo, out d))
+            {
+                return d;
+            }
+
+            formatinfo.NumberDecimalSeparator = ",";
+
+            if (float.TryParse(s, NumberStyles.Float, formatinfo, out d))
+            {
+                return d;
+            }
+
+            return 0;
         }
     }
 }

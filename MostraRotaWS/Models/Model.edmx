@@ -7,11 +7,13 @@
       <Schema Namespace="mostrarotaModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="coordenadas">
           <Key>
-            <PropertyRef Name="id" />
+            <PropertyRef Name="email_usr" />
+            <PropertyRef Name="num_rota" />
+            <PropertyRef Name="seq" />
           </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="email_usr" Type="varchar" MaxLength="128" Nullable="false" />
-          <Property Name="id_rota" Type="int" Nullable="false" />
+          <Property Name="num_rota" Type="int" Nullable="false" />
+          <Property Name="seq" Type="int" Nullable="false" />
           <Property Name="latitude" Type="real" Nullable="false" />
           <Property Name="longitude" Type="real" Nullable="false" />
           <Property Name="datahora" Type="datetime" Nullable="false" />
@@ -19,10 +21,10 @@
         <EntityType Name="rotas">
           <Key>
             <PropertyRef Name="email_usr" />
-            <PropertyRef Name="id" />
+            <PropertyRef Name="num_rota" />
           </Key>
           <Property Name="email_usr" Type="varchar" MaxLength="128" Nullable="false" />
-          <Property Name="id" Type="int" Nullable="false" />
+          <Property Name="num_rota" Type="int" Nullable="false" />
           <Property Name="dthr_ini" Type="datetime" Nullable="false" />
           <Property Name="dthr_fim" Type="datetime" Nullable="false" />
           <Property Name="distancia" Type="int" Nullable="false" />
@@ -41,11 +43,11 @@
           <ReferentialConstraint>
             <Principal Role="rotas">
               <PropertyRef Name="email_usr" />
-              <PropertyRef Name="id" />
+              <PropertyRef Name="num_rota" />
             </Principal>
             <Dependent Role="coordenadas">
               <PropertyRef Name="email_usr" />
-              <PropertyRef Name="id_rota" />
+              <PropertyRef Name="num_rota" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -81,11 +83,13 @@
       <Schema Namespace="mostrarotaModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="coordenadas">
           <Key>
-            <PropertyRef Name="id" />
+            <PropertyRef Name="email_usr" />
+            <PropertyRef Name="num_rota" />
+            <PropertyRef Name="seq" />
           </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="email_usr" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="id_rota" Type="Int32" Nullable="false" />
+          <Property Name="num_rota" Type="Int32" Nullable="false" />
+          <Property Name="seq" Type="Int32" Nullable="false" />
           <Property Name="latitude" Type="Single" Nullable="false" />
           <Property Name="longitude" Type="Single" Nullable="false" />
           <Property Name="datahora" Type="DateTime" Nullable="false" Precision="3" />
@@ -94,10 +98,10 @@
         <EntityType Name="rotas">
           <Key>
             <PropertyRef Name="email_usr" />
-            <PropertyRef Name="id" />
+            <PropertyRef Name="num_rota" />
           </Key>
           <Property Name="email_usr" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="id" Type="Int32" Nullable="false" />
+          <Property Name="num_rota" Type="Int32" Nullable="false" />
           <Property Name="dthr_ini" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="dthr_fim" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="distancia" Type="Int32" Nullable="false" />
@@ -119,11 +123,11 @@
           <ReferentialConstraint>
             <Principal Role="rotas">
               <PropertyRef Name="email_usr" />
-              <PropertyRef Name="id" />
+              <PropertyRef Name="num_rota" />
             </Principal>
             <Dependent Role="coordenadas">
               <PropertyRef Name="email_usr" />
-              <PropertyRef Name="id_rota" />
+              <PropertyRef Name="num_rota" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -161,9 +165,9 @@
           <EntitySetMapping Name="coordenadas">
             <EntityTypeMapping TypeName="mostrarotaModel.coordenadas">
               <MappingFragment StoreEntitySet="coordenadas">
-                <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="email_usr" ColumnName="email_usr" />
-                <ScalarProperty Name="id_rota" ColumnName="id_rota" />
+                <ScalarProperty Name="num_rota" ColumnName="num_rota" />
+                <ScalarProperty Name="seq" ColumnName="seq" />
                 <ScalarProperty Name="latitude" ColumnName="latitude" />
                 <ScalarProperty Name="longitude" ColumnName="longitude" />
                 <ScalarProperty Name="datahora" ColumnName="datahora" />
@@ -174,7 +178,7 @@
             <EntityTypeMapping TypeName="mostrarotaModel.rotas">
               <MappingFragment StoreEntitySet="rotas">
                 <ScalarProperty Name="email_usr" ColumnName="email_usr" />
-                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="num_rota" ColumnName="num_rota" />
                 <ScalarProperty Name="dthr_ini" ColumnName="dthr_ini" />
                 <ScalarProperty Name="dthr_fim" ColumnName="dthr_fim" />
                 <ScalarProperty Name="distancia" ColumnName="distancia" />

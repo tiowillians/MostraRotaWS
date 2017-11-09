@@ -21,7 +21,7 @@ namespace MostraRotaWS.Models
         }
     
         public string email_usr { get; set; }
-        public int id { get; set; }
+        public int num_rota { get; set; }
         public System.DateTime dthr_ini { get; set; }
         public System.DateTime dthr_fim { get; set; }
         public int distancia { get; set; }

@@ -14,9 +14,9 @@ namespace MostraRotaWS.Models
     
     public partial class coordenadas
     {
-        public int id { get; set; }
         public string email_usr { get; set; }
-        public int id_rota { get; set; }
+        public int num_rota { get; set; }
+        public int seq { get; set; }
         public float latitude { get; set; }
         public float longitude { get; set; }
         public System.DateTime datahora { get; set; }

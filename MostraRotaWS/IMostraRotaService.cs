@@ -69,14 +69,14 @@ namespace MostraRotaWS
         [Description("Retorna dados da rota solicitada.")]
         RotaDataContract GetRota(string usrEmail, int idRota);
 
-        // Inserir uma nova rota
+        // Inserir uma nova rota - com coordenadas
         [OperationContract]
         [WebInvoke(Method = "POST",
                    RequestFormat = WebMessageFormat.Json,
                    ResponseFormat = WebMessageFormat.Json,
                    UriTemplate = "Rota")]
-        [Description("Insere uma nova rota")]
-        bool InsertRota(RotaDataContract dados);
+        [Description("Insere uma nova rota, com coordenadas")]
+        bool InsertRotaCompleta(RotaDataContract dados);
 
         // Remover uma determinada rota do usuário
         [OperationContract]
