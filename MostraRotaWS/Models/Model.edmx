@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="mostrarotaModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="coordenadas">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="email_usr" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="id_rota" Type="int" Nullable="false" />
+          <Property Name="latitude" Type="real" Nullable="false" />
+          <Property Name="longitude" Type="real" Nullable="false" />
+          <Property Name="datahora" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="rotas">
+          <Key>
+            <PropertyRef Name="email_usr" />
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="email_usr" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="id" Type="int" Nullable="false" />
+          <Property Name="dthr_ini" Type="datetime" Nullable="false" />
+          <Property Name="dthr_fim" Type="datetime" Nullable="false" />
+          <Property Name="distancia" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="usuarios">
+          <Key>
+            <PropertyRef Name="email" />
+          </Key>
+          <Property Name="email" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="nome" Type="varchar" MaxLength="80" Nullable="false" />
+          <Property Name="login" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="rotas_coordenadas_fk">
+          <End Role="rotas" Type="Self.rotas" Multiplicity="1" />
+          <End Role="coordenadas" Type="Self.coordenadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="rotas">
+              <PropertyRef Name="email_usr" />
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="coordenadas">
+              <PropertyRef Name="email_usr" />
+              <PropertyRef Name="id_rota" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="usuarios_rotas_fk">
+          <End Role="usuarios" Type="Self.usuarios" Multiplicity="1" />
+          <End Role="rotas" Type="Self.rotas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="usuarios">
+              <PropertyRef Name="email" />
+            </Principal>
+            <Dependent Role="rotas">
+              <PropertyRef Name="email_usr" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="mostrarotaModelStoreContainer">
+          <EntitySet Name="coordenadas" EntityType="Self.coordenadas" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="rotas" EntityType="Self.rotas" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="usuarios" EntityType="Self.usuarios" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="rotas_coordenadas_fk" Association="Self.rotas_coordenadas_fk">
+            <End Role="rotas" EntitySet="rotas" />
+            <End Role="coordenadas" EntitySet="coordenadas" />
+          </AssociationSet>
+          <AssociationSet Name="usuarios_rotas_fk" Association="Self.usuarios_rotas_fk">
+            <End Role="usuarios" EntitySet="usuarios" />
+            <End Role="rotas" EntitySet="rotas" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="mostrarotaModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="coordenadas">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="email_usr" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="id_rota" Type="Int32" Nullable="false" />
+          <Property Name="latitude" Type="Single" Nullable="false" />
+          <Property Name="longitude" Type="Single" Nullable="false" />
+          <Property Name="datahora" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="rotas" Relationship="Self.rotas_coordenadas_fk" FromRole="coordenadas" ToRole="rotas" />
+        </EntityType>
+        <EntityType Name="rotas">
+          <Key>
+            <PropertyRef Name="email_usr" />
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="email_usr" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="id" Type="Int32" Nullable="false" />
+          <Property Name="dthr_ini" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="dthr_fim" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="distancia" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="coordenadas" Relationship="Self.rotas_coordenadas_fk" FromRole="rotas" ToRole="coordenadas" />
+          <NavigationProperty Name="usuarios" Relationship="Self.usuarios_rotas_fk" FromRole="rotas" ToRole="usuarios" />
+        </EntityType>
+        <EntityType Name="usuarios">
+          <Key>
+            <PropertyRef Name="email" />
+          </Key>
+          <Property Name="email" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="nome" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="login" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="rotas" Relationship="Self.usuarios_rotas_fk" FromRole="usuarios" ToRole="rotas" />
+        </EntityType>
+        <Association Name="rotas_coordenadas_fk">
+          <End Role="rotas" Type="Self.rotas" Multiplicity="1" />
+          <End Role="coordenadas" Type="Self.coordenadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="rotas">
+              <PropertyRef Name="email_usr" />
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="coordenadas">
+              <PropertyRef Name="email_usr" />
+              <PropertyRef Name="id_rota" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="usuarios_rotas_fk">
+          <End Role="usuarios" Type="Self.usuarios" Multiplicity="1" />
+          <End Role="rotas" Type="Self.rotas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="usuarios">
+              <PropertyRef Name="email" />
+            </Principal>
+            <Dependent Role="rotas">
+              <PropertyRef Name="email_usr" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="mostrarotaEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="coordenadas" EntityType="Self.coordenadas" />
+          <EntitySet Name="rotas" EntityType="Self.rotas" />
+          <EntitySet Name="usuarios" EntityType="Self.usuarios" />
+          <AssociationSet Name="rotas_coordenadas_fk" Association="Self.rotas_coordenadas_fk">
+            <End Role="rotas" EntitySet="rotas" />
+            <End Role="coordenadas" EntitySet="coordenadas" />
+          </AssociationSet>
+          <AssociationSet Name="usuarios_rotas_fk" Association="Self.usuarios_rotas_fk">
+            <End Role="usuarios" EntitySet="usuarios" />
+            <End Role="rotas" EntitySet="rotas" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="mostrarotaModelStoreContainer" CdmEntityContainer="mostrarotaEntities">
+          <EntitySetMapping Name="coordenadas">
+            <EntityTypeMapping TypeName="mostrarotaModel.coordenadas">
+              <MappingFragment StoreEntitySet="coordenadas">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="email_usr" ColumnName="email_usr" />
+                <ScalarProperty Name="id_rota" ColumnName="id_rota" />
+                <ScalarProperty Name="latitude" ColumnName="latitude" />
+                <ScalarProperty Name="longitude" ColumnName="longitude" />
+                <ScalarProperty Name="datahora" ColumnName="datahora" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="rotas">
+            <EntityTypeMapping TypeName="mostrarotaModel.rotas">
+              <MappingFragment StoreEntitySet="rotas">
+                <ScalarProperty Name="email_usr" ColumnName="email_usr" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="dthr_ini" ColumnName="dthr_ini" />
+                <ScalarProperty Name="dthr_fim" ColumnName="dthr_fim" />
+                <ScalarProperty Name="distancia" ColumnName="distancia" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="usuarios">
+            <EntityTypeMapping TypeName="mostrarotaModel.usuarios">
+              <MappingFragment StoreEntitySet="usuarios">
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="nome" ColumnName="nome" />
+                <ScalarProperty Name="login" ColumnName="login" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
