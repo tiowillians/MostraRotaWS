@@ -13,6 +13,6 @@ namespace MostraRotaWS
         public int NumRota { get; set; }
 
         [DataMember]
-        public DateTime DtHrIni { get; set; }
+        public string DtHrIni { get; set; }
     }
 }

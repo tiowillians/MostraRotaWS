@@ -195,7 +195,7 @@ namespace MostraRotaWS
                         novaRota = new RotaResumoDataContract
                         {
                             NumRota = r.num_rota,
-                            DtHrIni = r.dthr_ini,
+                            DtHrIni = r.dthr_ini.ToString("G"),
                         };
 
                         rotasList.Add(novaRota);
